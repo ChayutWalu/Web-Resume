@@ -312,3 +312,162 @@ imgStyle.textContent = `
     }
 `;
 document.head.appendChild(imgStyle);
+
+// Activities Carousel Functionality
+class ActivityCarousel {
+    constructor() {
+        this.slides = document.querySelectorAll('.activity-slide');
+        this.indicators = document.querySelectorAll('.indicator');
+        this.prevBtn = document.querySelector('.activity-prev');
+        this.nextBtn = document.querySelector('.activity-next');
+        this.currentSlide = 0;
+        this.totalSlides = this.slides.length;
+        this.autoRotateInterval = null;
+        this.isAutoRotating = true;
+        
+        this.init();
+    }
+    
+    init() {
+        if (this.slides.length === 0) return;
+        
+        this.bindEvents();
+        this.startAutoRotate();
+        this.updateSlide();
+    }
+    
+    bindEvents() {
+        // Previous button
+        if (this.prevBtn) {
+            this.prevBtn.addEventListener('click', () => this.prevSlide());
+        }
+        
+        // Next button
+        if (this.nextBtn) {
+            this.nextBtn.addEventListener('click', () => this.nextSlide());
+        }
+        
+        // Indicator clicks
+        this.indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => this.goToSlide(index));
+        });
+        
+        // Pause auto-rotation on hover
+        const carousel = document.querySelector('.activity-carousel');
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => this.pauseAutoRotate());
+            carousel.addEventListener('mouseleave', () => this.resumeAutoRotate());
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') this.prevSlide();
+            if (e.key === 'ArrowRight') this.nextSlide();
+        });
+    }
+    
+    updateSlide() {
+        // Remove active class from all slides and indicators
+        this.slides.forEach(slide => {
+            slide.classList.remove('active', 'prev');
+        });
+        
+        this.indicators.forEach(indicator => {
+            indicator.classList.remove('active');
+        });
+        
+        // Add active class to current slide
+        if (this.slides[this.currentSlide]) {
+            this.slides[this.currentSlide].classList.add('active');
+        }
+        
+        // Add active class to current indicator
+        if (this.indicators[this.currentSlide]) {
+            this.indicators[this.currentSlide].classList.add('active');
+        }
+        
+        // Add prev class to previous slide for smooth transitions
+        const prevIndex = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+        if (this.slides[prevIndex]) {
+            this.slides[prevIndex].classList.add('prev');
+        }
+    }
+    
+    nextSlide() {
+        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+        this.updateSlide();
+    }
+    
+    prevSlide() {
+        this.currentSlide = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+        this.updateSlide();
+    }
+    
+    goToSlide(index) {
+        if (index >= 0 && index < this.totalSlides) {
+            this.currentSlide = index;
+            this.updateSlide();
+        }
+    }
+    
+    startAutoRotate() {
+        this.autoRotateInterval = setInterval(() => {
+            if (this.isAutoRotating) {
+                this.nextSlide();
+            }
+        }, 4000); // Change slide every 4 seconds
+    }
+    
+    pauseAutoRotate() {
+        this.isAutoRotating = false;
+    }
+    
+    resumeAutoRotate() {
+        this.isAutoRotating = true;
+    }
+    
+    destroy() {
+        if (this.autoRotateInterval) {
+            clearInterval(this.autoRotateInterval);
+        }
+    }
+}
+
+// Initialize carousel when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new ActivityCarousel();
+});
+
+// Add carousel animation styles
+const carouselStyle = document.createElement('style');
+carouselStyle.textContent = `
+    .activity-slide {
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .activity-carousel:hover .activity-prev,
+    .activity-carousel:hover .activity-next {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    .activity-prev,
+    .activity-next {
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all 0.3s ease;
+    }
+    
+    .activity-overlay {
+        transition: transform 0.3s ease;
+    }
+    
+    .indicator {
+        transition: all 0.3s ease;
+    }
+    
+    .indicator:hover {
+        transform: scale(1.3);
+    }
+`;
+document.head.appendChild(carouselStyle);

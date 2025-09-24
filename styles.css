@@ -771,6 +771,207 @@ body {
     transform: scale(1.05);
 }
 
+/* Activities Section */
+.section-subtitle {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 1.125rem;
+    margin-bottom: 3rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.activities-gallery {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.activity-carousel {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    background: linear-gradient(135deg, var(--background) 0%, var(--background-alt) 100%);
+}
+
+.activity-slides {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+}
+
+.activity-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.activity-slide.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.activity-slide.prev {
+    transform: translateX(-100%);
+}
+
+.activity-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.activity-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.3s ease;
+    background: var(--background-alt);
+}
+
+.activity-image:hover {
+    transform: scale(1.05);
+}
+
+/* Specific positioning for KAIT2 image */
+.activity-image[alt*="KAIT2"] {
+    object-position: center;
+}
+
+.activity-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    padding: 2rem;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.activity-image-wrapper:hover .activity-overlay {
+    transform: translateY(0);
+}
+
+.activity-overlay h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+    font-weight: 600;
+}
+
+.activity-overlay p {
+    font-size: 1rem;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.activity-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.activity-prev,
+.activity-next {
+    background: rgba(220, 38, 38, 0.8);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    pointer-events: all;
+    backdrop-filter: blur(10px);
+}
+
+.activity-prev:hover,
+.activity-next:hover {
+    background: var(--primary-color);
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3);
+}
+
+.activity-prev:active,
+.activity-next:active {
+    transform: scale(0.95);
+}
+
+.activity-indicators {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    pointer-events: all;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.indicator.active {
+    background: var(--primary-color);
+    transform: scale(1.2);
+    border-color: white;
+}
+
+.indicator:hover {
+    background: rgba(220, 38, 38, 0.8);
+    transform: scale(1.1);
+}
+
+/* Auto-rotation animation */
+@keyframes autoRotate {
+    0% { transform: translateX(0); }
+    33.33% { transform: translateX(-100%); }
+    66.66% { transform: translateX(-200%); }
+    100% { transform: translateX(0); }
+}
+
+.activity-slides.auto-rotate .activity-slide.active {
+    animation: autoRotate 12s infinite;
+}
+
+/* Dark mode styles for activities */
+[data-theme="dark"] .activity-carousel {
+    background: linear-gradient(135deg, #111111 0%, #1a1a1a 100%);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+[data-theme="dark"] .activity-prev,
+[data-theme="dark"] .activity-next {
+    background: rgba(220, 38, 38, 0.9);
+}
+
+[data-theme="dark"] .indicator {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 /* Skills */
 .skills-container {
     display: grid;
@@ -1091,6 +1292,30 @@ body {
     
     .certificate-img {
         height: 150px;
+    }
+
+    /* Activities responsive */
+    .activity-slides {
+        height: 350px;
+    }
+    
+    .activity-overlay {
+        padding: 1rem;
+    }
+    
+    .activity-overlay h3 {
+        font-size: 1.25rem;
+    }
+    
+    .activity-overlay p {
+        font-size: 0.875rem;
+    }
+    
+    .activity-prev,
+    .activity-next {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 
     .timeline {
