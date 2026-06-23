@@ -58,11 +58,9 @@ const navbar = document.querySelector('.navbar');
 
 window.addEventListener('scroll', () => {
     if (window.scrollY > 100) {
-        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+        navbar.classList.add('scrolled');
     } else {
-        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+        navbar.classList.remove('scrolled');
     }
 });
 
@@ -471,3 +469,103 @@ carouselStyle.textContent = `
     }
 `;
 document.head.appendChild(carouselStyle);
+
+// Hero Canvas Particle Effect
+(function() {
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    let animationFrameId = null;
+
+    function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        width = canvas.width = rect.width;
+        height = canvas.height = rect.height;
+        initParticles();
+    }
+
+    class Particle {
+        constructor() {
+            this.reset();
+            // Start at a random position initially
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.vx = (Math.random() - 0.5) * 0.6;
+            this.vy = (Math.random() - 0.5) * 0.6;
+            this.radius = Math.random() * 2 + 1;
+        }
+
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off edges with a slight margin
+            if (this.x < 0 || this.x > width) this.vx = -this.vx;
+            if (this.y < 0 || this.y > height) this.vy = -this.vy;
+        }
+
+        draw() {
+            const theme = document.body.getAttribute('data-theme') || 'light';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            // In dark mode: red particles. In light mode: red/dark grey particles.
+            ctx.fillStyle = theme === 'dark' ? 'rgba(230, 57, 70, 0.5)' : 'rgba(26, 26, 26, 0.3)';
+            ctx.fill();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        const count = Math.min(80, Math.floor((width * height) / 18000));
+        for (let i = 0; i < count; i++) {
+            particles.push(new Particle());
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+
+        // Draw connections
+        const theme = document.body.getAttribute('data-theme') || 'light';
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < 120) {
+                    const alpha = (1 - dist / 120) * 0.25;
+                    ctx.strokeStyle = theme === 'dark' 
+                        ? `rgba(230, 57, 70, ${alpha})` 
+                        : `rgba(26, 26, 26, ${alpha * 0.6})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        animationFrameId = requestAnimationFrame(animate);
+    }
+
+    // Initialize and start animation
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    animate();
+})();
