@@ -100,24 +100,31 @@ sections.forEach(section => {
     observer.observe(section);
 });
 
-// Form Submission
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Get form data
-        const formData = new FormData(contactForm);
-        const data = Object.fromEntries(formData);
-        
-        // Here you would typically send the data to a server
-        // For now, we'll just show an alert
-        alert(`Thank you for your message, ${data.name}! I'll get back to you soon.`);
-        
-        // Reset the form
-        contactForm.reset();
-    });
+// Certificate Lightbox
+function openLightbox(imageSrc, caption) {
+    const overlay = document.getElementById('lightboxOverlay');
+    const image = document.getElementById('lightboxImage');
+    const captionEl = document.getElementById('lightboxCaption');
+    
+    image.src = imageSrc;
+    image.alt = caption;
+    captionEl.textContent = caption;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
+
+function closeLightbox() {
+    const overlay = document.getElementById('lightboxOverlay');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close lightbox with Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLightbox();
+    }
+});
 
 // Add CSS for animations
 const style = document.createElement('style');
